@@ -82,7 +82,7 @@ workflows:
             - terraform_fmt
           filters:
             branches:
-              only: /master
+              only: master
       - terraform_apply:
           filters:
             branches:
