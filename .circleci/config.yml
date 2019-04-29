@@ -79,6 +79,9 @@ workflows:
       - terraform_plan:
           requires:
             - terraform_fmt
+          filters:
+            branches:
+              only: /master
       - terraform_apply:
           requires:
             - terraform_plan
