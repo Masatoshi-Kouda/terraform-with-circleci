@@ -24,6 +24,17 @@ jobs:
             export GOOGLE_APPLICATION_CREDENTIALS="${HOME}/gcp_credentials.json"
             cd terraform/gcp/pubsub
             terraform init
+  terraform_plan:
+    docker:
+      - image: hashicorp/terraform:0.11.13
+    working_directory: ~/my_project
+    steps:
+      - checkout
+      - run:
+          name: "terraform plan"
+          command: |
+            cd terraform/gcp/pubsub
+            terraform plan
 
 workflows:
   version: 2
@@ -33,3 +44,6 @@ workflows:
       - terraform_init:
           requires:
             - terraform_fmt
+      - terraform_plan:
+          requires:
+            - terraform_init
