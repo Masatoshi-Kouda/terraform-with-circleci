@@ -27,6 +27,7 @@ commands:
             do
               cd "$line/terraform"
               terraform fmt -diff=true -check=true
+              echo $HOME
               cd $HOME
             done
 
