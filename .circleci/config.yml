@@ -18,11 +18,9 @@ commands:
   terraform_fmt:
     steps:
       - run:
-          name: "install bash"
-          command: apk add bash
-      - run:
           name: "terraform fmt"
           command: |
+            apk add bash
             bash ./.circleci/get-changed-projects.sh | while read line
             do
               cd "$(eval echo $CIRCLE_WORKING_DIRECTORY)/$line/terraform"
@@ -35,6 +33,7 @@ commands:
           name: "terraform init"
           command: |
             source $BASH_ENV
+            apk add bash
             bash ./.circleci/get-changed-projects.sh | while read line
             do
               cd "$(eval echo $CIRCLE_WORKING_DIRECTORY)/$line/terraform/gcp/pubsub"
@@ -47,6 +46,7 @@ commands:
           name: "terraform plan"
           command: |
             source $BASH_ENV
+            apk add bash
             bash ./.circleci/get-changed-projects.sh | while read line
             do
               cd "$(eval echo $CIRCLE_WORKING_DIRECTORY)/$line/terraform/gcp/pubsub"
@@ -59,8 +59,13 @@ commands:
           name: "terraform apply"
           command: |
             source $BASH_ENV
-            cd terraform/gcp/pubsub
-            terraform apply --auto-approve
+            apk add bash
+            bash ./.circleci/get-changed-projects.sh | while read line
+            do
+              cd "$(eval echo $CIRCLE_WORKING_DIRECTORY)/$line/terraform/gcp/pubsub"
+              terraform apply --auto-approve
+            done
+
 
 jobs:
   terraform_fmt:
