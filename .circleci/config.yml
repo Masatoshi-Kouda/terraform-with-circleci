@@ -14,7 +14,7 @@ commands:
           command: |
               terraform fmt -diff=true -check=true
 
-  terraform_plan:
+  terraform_init:
     steps:
       - run:
           name: "terraform init"
@@ -25,6 +25,9 @@ commands:
             source $BASH_ENV
             cd gmail/terraform/gcp/pubsub/$ENVIRONMENT_DIRECTORY
             terraform init -backend-config backend.tfvars ../
+
+  terraform_plan:
+    steps:
       - run:
           name: "terraform plan"
           command: |
@@ -51,11 +54,13 @@ jobs:
     executor: default
     steps:
       - checkout
+      - terraform_init
       - terraform_plan
   plan-stg:
     executor: default
     steps:
       - checkout
+      - terraform_init
       - terraform_plan
   apply-dev:
     executor: default
