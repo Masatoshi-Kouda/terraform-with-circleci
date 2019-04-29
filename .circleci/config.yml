@@ -8,6 +8,8 @@ jobs:
       - checkout
       - run:
           name: "terraform fmt"
+          command: |
+            terraform fmt -diff=true -check=true
 
 workflows:
   version: 2
