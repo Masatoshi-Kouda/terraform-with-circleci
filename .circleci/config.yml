@@ -4,7 +4,7 @@ executors:
   default:
     docker:
       - image: hashicorp/terraform:0.11.13
-    working_directory: ~/my_project
+    working_directory: ~/project
 
 commands:
   setting_up_gcp_credentials:
@@ -25,10 +25,10 @@ commands:
           command: |
             bash ./.circleci/get-changed-projects.sh | while read line
             do
+              pwd
               cd "$line/terraform"
               terraform fmt -diff=true -check=true
-              echo $HOME
-              cd $HOME
+              pwd
             done
 
   terraform_init:
