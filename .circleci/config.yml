@@ -19,7 +19,10 @@ commands:
     steps:
       - run:
           name: "terraform fmt"
-          command: terraform fmt -diff=true -check=true
+          command: |
+            bash .circleci/get-changed-projects.sh | while read line do;
+              $(cd "$line/terraform" && terraform fmt -diff=true -check=true)
+            done
 
   terraform_init:
     steps:
