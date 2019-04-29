@@ -20,6 +20,7 @@ commands:
       - run:
           name: "terraform fmt"
           command: |
+            pwd && ls -la
             ./.circleci/get-changed-projects.sh | while read line
             do
               $(cd "$line/terraform" && terraform fmt -diff=true -check=true)
