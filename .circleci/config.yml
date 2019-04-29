@@ -7,7 +7,6 @@ executors:
     working_directory: ~/project
 
 commands:
-
   terraform_fmt:
     steps:
       - run:
@@ -15,7 +14,7 @@ commands:
           command: |
               terraform fmt -diff=true -check=true
 
-  terraform_init:
+  terraform_plan:
     steps:
       - run:
           name: "terraform init"
@@ -26,7 +25,11 @@ commands:
             source $BASH_ENV
             cd gmail/terraform/gcp/pubsub/$ENVIRONMENT_DIRECTORY
             terraform init -backend-config backend.tfvars ../
-            pwd
+      - run:
+          name: "terraform plan"
+          command: |
+            cd gmail/terraform/gcp/pubsub/$ENVIRONMENT_DIRECTORY
+            terraform plan ../
 
 jobs:
   fmt:
@@ -34,27 +37,27 @@ jobs:
     steps:
       - checkout
       - terraform_fmt
-  init-dev:
+  plan-dev:
     executor: default
     steps:
       - checkout
-      - terraform_init
-  init-stg:
+      - terraform_plan
+  plan-stg:
     executor: default
     steps:
       - checkout
-      - terraform_init
+      - terraform_plan
 
 workflows:
   version: 2
   terraform:
     jobs:
       - fmt
-      - init-dev:
+      - plan-dev:
           context: gmail-dev
           requires:
             - fmt
-      - init-stg:
+      - plan-stg:
           context: gmail-stg
           requires:
             - fmt
