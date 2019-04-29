@@ -32,6 +32,24 @@ commands:
             cd gmail/terraform/gcp/pubsub/$ENVIRONMENT_DIRECTORY
             terraform plan ../
 
+  terraform_apply:
+    steps:
+      - run:
+          name: "terraform init"
+          command: |
+            mkdir -p $HOME/$ENVIRONMENT_DIRECTORY
+            echo $GCP_CREDENTIALS | base64 -d > $HOME/$ENVIRONMENT_DIRECTORY/gcp_credentials.json
+            echo 'export GOOGLE_APPLICATION_CREDENTIALS="$HOME/$ENVIRONMENT_DIRECTORY/gcp_credentials.json"' >> $BASH_ENV
+            source $BASH_ENV
+            cd gmail/terraform/gcp/pubsub/$ENVIRONMENT_DIRECTORY
+            terraform init -backend-config backend.tfvars ../
+      - run:
+          name: "terraform apply"
+          command: |
+            source $BASH_ENV
+            cd gmail/terraform/gcp/pubsub/$ENVIRONMENT_DIRECTORY
+            terraform apply --auto-approve ../
+
 jobs:
   fmt:
     executor: default
@@ -48,6 +66,17 @@ jobs:
     steps:
       - checkout
       - terraform_plan
+  apply-dev:
+    executor: default
+    steps:
+      - checkout
+      - terraform_apply
+  apply-stg:
+    executor: default
+    steps:
+      - checkout
+      - terraform_apply
+
 
 workflows:
   version: 2
@@ -62,3 +91,17 @@ workflows:
           context: gmail-stg
           requires:
             - fmt
+      - apply-dev:
+          context: gmail-dev
+          requires:
+            - plan-dev
+          filters:
+            branches:
+              only: master
+      - apply-stg:
+          context: gmail-stg
+          requires:
+            - plan-stg
+          filters:
+            branches:
+              only: master
