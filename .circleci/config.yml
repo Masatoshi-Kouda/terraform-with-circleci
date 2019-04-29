@@ -38,7 +38,6 @@ commands:
   terraform_apply:
     steps:
       - run:
-      - run:
           name: "terraform apply"
           command: |
             source $BASH_ENV
