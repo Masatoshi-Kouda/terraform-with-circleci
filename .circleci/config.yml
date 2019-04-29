@@ -19,8 +19,11 @@ jobs:
       - run:
           name: "terraform init"
           command: |
-            pwd
+            echo ${HOME}
+            echo $GCP_CREDENTIALS | base64 --decode > ${HOME}/gcp_credentials.json
+            export GOOGLE_APPLICATION_CREDENTIALS="${HOME}/gcp_credentials.json"
             cd terraform/gcp/pubsub
+            pwd
             terraform init
 
 workflows:
