@@ -33,7 +33,7 @@ jobs:
     executor: default
     steps:
       - checkout
-      - terraform-fmt
+      - terraform_fmt
   init-dev:
     executor: default
     steps:
