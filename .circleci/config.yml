@@ -69,7 +69,6 @@ jobs:
       - checkout
       - setting_up_gcp_credentials
       - terraform_init
-      - terraform_plan
       - terraform_apply
 
 workflows:
@@ -84,6 +83,8 @@ workflows:
             branches:
               only: master
       - terraform_apply:
+          requires:
+            - terraform_plan
           filters:
             branches:
-              only: /^release\/masatoshi\/.*/
+              only: /^release\/masatoshi\/.*$/
