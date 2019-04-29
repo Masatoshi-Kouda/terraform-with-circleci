@@ -86,4 +86,4 @@ workflows:
       - terraform_apply:
           filters:
             branches:
-              only: /^release\/.+$/
+              only: /^release\/masatoshi\/.*/
