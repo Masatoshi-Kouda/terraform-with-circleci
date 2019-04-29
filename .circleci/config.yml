@@ -1,49 +1,56 @@
-version: 2
-jobs:
-  terraform_fmt:
+version: 2.1
+
+executors:
+  default:
     docker:
       - image: hashicorp/terraform:0.11.13
-    working_directory: ~/my_project
+
+commands:
+  terraform_fmt:
     steps:
-      - checkout
       - run:
           name: "terraform fmt"
           command: |
             terraform fmt -diff=true -check=true
+
   terraform_init:
-    docker:
-      - image: hashicorp/terraform:0.11.13
-    working_directory: ~/my_project
     steps:
-      - checkout
       - run:
           name: "terraform init"
           command: |
-            echo ${HOME}
             echo $GCP_CREDENTIALS | base64 -d > ${HOME}/gcp_credentials.json
             export GOOGLE_APPLICATION_CREDENTIALS="${HOME}/gcp_credentials.json"
             cd terraform/gcp/pubsub
             terraform init
+
   terraform_plan:
-    docker:
-      - image: hashicorp/terraform:0.11.13
-    working_directory: ~/my_project
     steps:
-      - checkout
       - run:
           name: "terraform plan"
           command: |
             cd terraform/gcp/pubsub
             terraform plan
 
+jobs:
+  terraform_fmt:
+    executor: default
+    working_directory: ~/my_project
+    steps:
+      - checkout
+      - terraform_fmt
+  terraform_plan:
+    executor: default
+    working_directory: ~/my_project
+    steps:
+      - checkout
+      - terraform_init
+      - terraform_plan
+
 workflows:
   version: 2
   terraform:
     jobs:
       - terraform_fmt
-      - terraform_init:
-          requires:
-            - terraform_fmt
       - terraform_plan:
           requires:
-            - terraform_init
+            - terraform_fmt
