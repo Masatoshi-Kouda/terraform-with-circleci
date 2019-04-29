@@ -26,7 +26,7 @@ commands:
       - run:
           name: "terraform init"
           command: |
-            source $BASH_ENV
+            #source $BASH_ENV
             cd terraform/gcp/pubsub
             terraform init
 
@@ -35,7 +35,7 @@ commands:
       - run:
           name: "terraform plan"
           command: |
-            source $BASH_ENV
+            #source $BASH_ENV
             cd terraform/gcp/pubsub
             terraform plan
 
