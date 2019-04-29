@@ -32,6 +32,15 @@ commands:
             cd gmail/terraform/gcp/pubsub/$ENVIRONMENT_DIRECTORY
             terraform plan ../
 
+  terraform_apply:
+    steps:
+      - run:
+          name: "terraform apply"
+          command: |
+            source $BASH_ENV
+            cd gmail/terraform/gcp/pubsub/$ENVIRONMENT_DIRECTORY
+            terraform apply ../
+
 jobs:
   fmt:
     executor: default
@@ -48,6 +57,19 @@ jobs:
     steps:
       - checkout
       - terraform_plan
+  apply-dev:
+    executor: default
+    steps:
+      - checkout
+      - terraform_plan
+      - terraform_apply
+  apply-stg:
+    executor: default
+    steps:
+      - checkout
+      - terraform_plan
+      - terraform_apply
+
 
 workflows:
   version: 2
@@ -62,3 +84,13 @@ workflows:
           context: gmail-stg
           requires:
             - fmt
+      - apply-dev:
+          context: gmail-dev
+          filters:
+            branches:
+              only: master
+      - apply-stg:
+          context: gmail-stg
+          filters:
+            branches:
+              only: master
