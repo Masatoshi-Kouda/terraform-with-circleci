@@ -1,5 +1,5 @@
 variable "project" {
-  default = "masatoshi"
+  default = "gmail"
 }
 
 variable "project_id" {

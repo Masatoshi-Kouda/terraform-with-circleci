@@ -26,7 +26,7 @@ commands:
       - run:
           name: "terraform init"
           command: |
-            #source $BASH_ENV
+            source $BASH_ENV
             cd terraform/gcp/pubsub
             terraform init
 
@@ -35,7 +35,7 @@ commands:
       - run:
           name: "terraform plan"
           command: |
-            #source $BASH_ENV
+            source $BASH_ENV
             cd terraform/gcp/pubsub
             terraform plan
 
@@ -77,15 +77,15 @@ workflows:
   terraform:
     jobs:
       - terraform_fmt
-      - terraform_plan:
-          requires:
-            - terraform_fmt
-          filters:
-            branches:
-              only: master
-      - terraform_apply:
-          requires:
-            - terraform_fmt
-          filters:
-            branches:
-              only: /^release\/masatoshi\/.*$/
+#      - terraform_plan:
+#          requires:
+#            - terraform_fmt
+#          filters:
+#            branches:
+#              only: master
+#      - terraform_apply:
+#          requires:
+#            - terraform_fmt
+#          filters:
+#            branches:
+#              only: /^release\/masatoshi\/.*$/
