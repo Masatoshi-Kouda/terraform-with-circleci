@@ -14,7 +14,7 @@ commands:
           command: |
               terraform fmt -diff=true -check=true
 
-  terraform_init:
+  terraform_plan:
     steps:
       - run:
           name: "terraform init"
@@ -25,9 +25,6 @@ commands:
             source $BASH_ENV
             cd gmail/terraform/gcp/pubsub/$ENVIRONMENT_DIRECTORY
             terraform init -backend-config backend.tfvars ../
-
-  terraform_plan:
-    steps:
       - run:
           name: "terraform plan"
           command: |
@@ -37,6 +34,15 @@ commands:
 
   terraform_apply:
     steps:
+      - run:
+          name: "terraform init"
+          command: |
+            mkdir -p $HOME/$ENVIRONMENT_DIRECTORY
+            echo $GCP_CREDENTIALS | base64 -d > $HOME/$ENVIRONMENT_DIRECTORY/gcp_credentials.json
+            echo 'export GOOGLE_APPLICATION_CREDENTIALS="$HOME/$ENVIRONMENT_DIRECTORY/gcp_credentials.json"' >> $BASH_ENV
+            source $BASH_ENV
+            cd gmail/terraform/gcp/pubsub/$ENVIRONMENT_DIRECTORY
+            terraform init -backend-config backend.tfvars ../
       - run:
           name: "terraform apply"
           command: |
@@ -54,13 +60,11 @@ jobs:
     executor: default
     steps:
       - checkout
-      - terraform_init
       - terraform_plan
   plan-stg:
     executor: default
     steps:
       - checkout
-      - terraform_init
       - terraform_plan
   apply-dev:
     executor: default
