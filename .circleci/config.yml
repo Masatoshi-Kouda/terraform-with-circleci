@@ -28,6 +28,7 @@ commands:
       - run:
           name: "terraform plan"
           command: |
+            export GOOGLE_APPLICATION_CREDENTIALS="${HOME}/gcp_credentials.json"
             cd terraform/gcp/pubsub
             terraform plan
 
