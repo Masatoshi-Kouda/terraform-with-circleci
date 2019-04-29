@@ -12,8 +12,8 @@ commands:
       - run:
           name: "setting up gcp credentials"
           command: |
-            echo $GCP_CREDENTIALS | base64 -d > ${HOME}/gcp_credentials.json
-            echo 'GOOGLE_APPLICATION_CREDENTIALS="$HOME/gcp_credentials.json"' >> $BASH_ENV
+            echo $GCP_CREDENTIALS | base64 -d > $HOME/gcp_credentials.json
+            echo 'export GOOGLE_APPLICATION_CREDENTIALS="$HOME/gcp_credentials.json"' >> $BASH_ENV
 
   terraform_fmt:
     steps:
