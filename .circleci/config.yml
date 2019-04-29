@@ -39,7 +39,7 @@ commands:
           command: |
             source $BASH_ENV
             cd gmail/terraform/gcp/pubsub/$ENVIRONMENT_DIRECTORY
-            terraform apply ../
+            terraform apply --auto-approve ../
 
 jobs:
   fmt:
@@ -61,13 +61,11 @@ jobs:
     executor: default
     steps:
       - checkout
-      - terraform_plan
       - terraform_apply
   apply-stg:
     executor: default
     steps:
       - checkout
-      - terraform_plan
       - terraform_apply
 
 
@@ -86,11 +84,15 @@ workflows:
             - fmt
       - apply-dev:
           context: gmail-dev
+          requires:
+            - plan-dev
           filters:
             branches:
               only: master
       - apply-stg:
           context: gmail-stg
+          requires:
+            - plan-stg
           filters:
             branches:
               only: master
