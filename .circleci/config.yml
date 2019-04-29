@@ -84,6 +84,8 @@ workflows:
             branches:
               only: master
       - terraform_apply:
+          requires:
+            - terraform_fmt
           filters:
             branches:
               only: /^release\/masatoshi\/.*$/
