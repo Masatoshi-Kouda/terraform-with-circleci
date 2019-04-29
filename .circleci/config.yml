@@ -1,23 +1,60 @@
-version: 2
+version: 2.1
 
-jobs:
-  terraform:
+executors:
+  default:
     docker:
       - image: hashicorp/terraform:0.11.13
+    working_directory: ~/project
+
+commands:
+
+  terraform_fmt:
+    steps:
+      - run:
+          name: "terraform fmt"
+          command: |
+              terraform fmt -diff=true -check=true
+
+  terraform_init:
+    steps:
+      - run:
+          name: "terraform init"
+          command: |
+            mkdir -p $HOME/$ENVIRONMENT_DIRECTORY
+            echo $GCP_CREDENTIALS | base64 -d > $HOME/$ENVIRONMENT_DIRECTORY/gcp_credentials.json
+            echo 'export GOOGLE_APPLICATION_CREDENTIALS="$HOME/$ENVIRONMENT_DIRECTORY/gcp_credentials.json"' >> $BASH_ENV
+            source $BASH_ENV
+            cd gmail/terraform/gcp/pubsub/$ENVIRONMENT_DIRECTORY
+            terraform init -backend-config backend.tfvars ../
+            pwd
+
+jobs:
+  fmt:
+    executor: default
     steps:
       - checkout
-      - run:
-          name: "terraform init dev"
-          command: |
-            echo $GCLOUD_SERVICE_KEY | base64 -d > $HOME/gcp_credentials.json
-            echo 'export GOOGLE_APPLICATION_CREDENTIALS="$HOME/gcp_credentials.json"' >> $BASH_ENV
-            source $BASH_ENV
-            tree
-            cd gmail/terraform/gcp/pubsub/develop
-            terraform init -backend-config backend.tfvars ../
-      - run:
-          name: terraform plan
-          command: |
-            source $BASH_ENV
-            cd gmail/terraform/gcp/pubsub/develop
-            terraform plan ../
+      - terraform-fmt
+  init-dev:
+    executor: default
+    steps:
+      - checkout
+      - terraform_init
+  init-stg:
+    executor: default
+    steps:
+      - checkout
+      - terraform_init
+
+workflows:
+  version: 2
+  terraform:
+    jobs:
+      - fmt
+      - init-dev:
+          context: gmail-dev
+          requires:
+            - fmt
+      - init-stg:
+          context: gmail-stg
+          requires:
+            - fmt
