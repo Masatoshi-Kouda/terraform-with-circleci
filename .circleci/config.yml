@@ -10,9 +10,21 @@ jobs:
           name: "terraform fmt"
           command: |
             terraform fmt -diff=true -check=true
+  terraform_init:
+    docker:
+      - image: hashicorp/terraform:0.11.13
+    working_directory: ~/my_project
+    steps:
+      - checkout
+      - run:
+          name: "terraform init"
+          command: |
+            cd terraform/gcp/pubusub
+            terraform init
 
 workflows:
   version: 2
   terraform:
     jobs:
       - terraform_fmt
+      - terraform_init
