@@ -39,6 +39,15 @@ commands:
             cd terraform/gcp/pubsub
             terraform plan
 
+  terraform_apply:
+    steps:
+      - run:
+          name: "terraform apply"
+          command: |
+            source $BASH_ENV
+            cd terraform/gcp/pubsub
+            terraform apply --auto-approve
+
 jobs:
   terraform_fmt:
     executor: default
@@ -52,12 +61,7 @@ jobs:
       - checkout
       - setting_up_gcp_credentials
       - terraform_init
-      - run:
-          name: "terraform plan"
-          command: |
-            source $BASH_ENV
-            cd terraform/gcp/pubsub
-            terraform plan
+      - terraform_plan
 
   terraform_apply:
     executor: default
@@ -65,13 +69,7 @@ jobs:
       - checkout
       - setting_up_gcp_credentials
       - terraform_init
-      - run:
-          name: "terraform apply"
-          command: |
-            source $BASH_ENV
-            cd terraform/gcp/pubsub
-            terraform apply --auto-approve
-
+      - terraform_apply
 
 workflows:
   version: 2
@@ -84,3 +82,6 @@ workflows:
       - terraform_apply:
           requires:
             - terraform_plan
+          filters:
+            branches:
+              only: /^release\/.+$/
