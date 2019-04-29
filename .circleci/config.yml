@@ -25,10 +25,10 @@ commands:
           command: |
             bash ./.circleci/get-changed-projects.sh | while read line
             do
+              cd $CIRCLE_WORKING_DIRECTORY
               pwd
               cd "$line/terraform"
               terraform fmt -diff=true -check=true
-              pwd
             done
 
   terraform_init:
