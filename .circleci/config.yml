@@ -1,110 +1,23 @@
-version: 2.1
-
-executors:
-  default:
-    docker:
-      - image: hashicorp/terraform:0.11.13
-    working_directory: ~/project
-
-commands:
-  setting_up_gcp_credentials:
-    steps:
-      - run:
-          name: "setting up gcp credentials"
-          command: |
-            echo $GCP_CREDENTIALS | base64 -d > $HOME/gcp_credentials.json
-            echo 'export GOOGLE_APPLICATION_CREDENTIALS="$HOME/gcp_credentials.json"' >> $BASH_ENV
-
-  terraform_fmt:
-    steps:
-      - run:
-          name: "terraform fmt"
-          command: |
-            apk add bash
-            bash ./.circleci/get-changed-projects.sh | while read line
-            do
-              cd "$(eval echo $CIRCLE_WORKING_DIRECTORY)/$line/terraform"
-              terraform fmt -diff=true -check=true
-            done
-
-  terraform_init:
-    steps:
-      - run:
-          name: "terraform init"
-          command: |
-            source $BASH_ENV
-            apk add bash
-            bash ./.circleci/get-changed-projects.sh | while read line
-            do
-              cd "$(eval echo $CIRCLE_WORKING_DIRECTORY)/$line/terraform/gcp/pubsub"
-              terraform init
-            done
-
-  terraform_plan:
-    steps:
-      - run:
-          name: "terraform plan"
-          command: |
-            source $BASH_ENV
-            apk add bash
-            bash ./.circleci/get-changed-projects.sh | while read line
-            do
-              cd "$(eval echo $CIRCLE_WORKING_DIRECTORY)/$line/terraform/gcp/pubsub"
-              terraform plan
-            done
-
-  terraform_apply:
-    steps:
-      - run:
-          name: "terraform apply"
-          command: |
-            source $BASH_ENV
-            apk add bash
-            bash ./.circleci/get-changed-projects.sh | while read line
-            do
-              cd "$(eval echo $CIRCLE_WORKING_DIRECTORY)/$line/terraform/gcp/pubsub"
-              terraform apply --auto-approve
-            done
-
+version: 2
 
 jobs:
-  terraform_fmt:
-    executor: default
-    steps:
-      - checkout
-      - terraform_fmt
-
-  terraform_plan:
-    executor: default
-    steps:
-      - checkout
-      - setting_up_gcp_credentials
-      - terraform_init
-      - terraform_plan
-
-  terraform_apply:
-    executor: default
-    steps:
-      - checkout
-      - setting_up_gcp_credentials
-      - terraform_init
-      - terraform_plan
-      - terraform_apply
-
-workflows:
-  version: 2
   terraform:
-    jobs:
-      - terraform_fmt
-      - terraform_plan:
-          requires:
-            - terraform_fmt
-#          filters:
-#            branches:
-#              only: master
-#      - terraform_apply:
-#          requires:
-#            - terraform_fmt
-#          filters:
-#            branches:
-#              only: /^release\/masatoshi\/.*$/
+    docker:
+      - image: hashicorp/terraform:0.11.13
+    steps:
+      - checkout
+      - run:
+          name: "terraform init dev"
+          command: |
+            echo $GCLOUD_SERVICE_KEY | base64 -d > $HOME/gcp_credentials.json
+            echo 'export GOOGLE_APPLICATION_CREDENTIALS="$HOME/gcp_credentials.json"' >> $BASH_ENV
+            source $BASH_ENV
+            tree
+            cd gmail/terraform/gcp/pubsub/develop
+            terraform init -backend-config backend.tfvars ../
+      - run:
+          name: terraform plan
+          command: |
+            source $BASH_ENV
+            cd gmail/terraform/gcp/pubsub/develop
+            terraform plan ../

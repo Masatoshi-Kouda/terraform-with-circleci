@@ -1,9 +1,9 @@
 variable "project" {
-  default = "gmail"
+  default = ""
 }
 
 variable "project_id" {
-  default = "masatoshi-kouda-207408"
+  default = ""
 }
 
 variable "region" {
