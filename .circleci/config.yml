@@ -18,10 +18,12 @@ commands:
   terraform_fmt:
     steps:
       - run:
+          name: "install bash"
+          command: apk add bash
+      - run:
           name: "terraform fmt"
           command: |
-            pwd && ls -la
-            ./.circleci/get-changed-projects.sh | while read line
+            bash ./.circleci/get-changed-projects.sh | while read line
             do
               $(cd "$line/terraform" && terraform fmt -diff=true -check=true)
             done
