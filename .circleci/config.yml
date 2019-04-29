@@ -25,8 +25,9 @@ commands:
           command: |
             bash ./.circleci/get-changed-projects.sh | while read line
             do
-              echo "///////// $line //////////"
-              $(cd "$line/terraform" && terraform fmt -diff=true -check=true)
+              cd "$line/terraform"
+              terraform fmt -diff=true -check=true
+              cd $HOME
             done
 
   terraform_init:
