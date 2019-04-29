@@ -23,9 +23,11 @@ commands:
       - run:
           name: "terraform fmt"
           command: |
+            cd $CIRCLE_WORKING_DIRECTORY
+            pwd
             bash ./.circleci/get-changed-projects.sh | while read line
             do
-              cd $CIRCLE_WORKING_DIRECTORY
+              #eval "cd $CIRCLE_WORKING_DIRECTORY"
               pwd
               cd "$line/terraform"
               terraform fmt -diff=true -check=true
