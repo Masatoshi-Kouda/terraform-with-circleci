@@ -99,7 +99,10 @@ workflows:
   terraform:
     jobs:
       # fmt
-      - fmt
+      - fmt:
+          filters:
+            branches:
+              ignore: /^release/.+\/.+$/
       # plan
       - plan-dev:
           context: gmail-dev
