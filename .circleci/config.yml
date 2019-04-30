@@ -60,6 +60,7 @@ jobs:
   plan: &plan
     executor: default
     steps:
+      - checkout
       - terraform_plan
   plan-dev:
     <<: *plan
@@ -71,6 +72,7 @@ jobs:
   apply: &apply
     executor: default
     steps:
+      - checkout
       - terraform_apply
   apply-dev:
     <<: *apply
@@ -87,7 +89,7 @@ jobs:
 ################################################################
 workflows:
   version: 2
-  terraform:
+  build_plan_apply:
     jobs:
       - build
       - plan-dev:
