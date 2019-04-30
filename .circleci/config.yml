@@ -68,7 +68,7 @@ jobs:
   plan-prd:
     <<: *plan
 
-  apply:
+  apply: &apply
     executor: default
     steps:
       - terraform_apply
@@ -90,7 +90,6 @@ workflows:
   terraform:
     jobs:
       - build
-
       - plan-dev:
           context: gmail-dev
           requires:
@@ -99,7 +98,6 @@ workflows:
           context: gmail-stg
           requires:
             - build
-
       - apply-dev:
           context: gmail-dev
           requires:
