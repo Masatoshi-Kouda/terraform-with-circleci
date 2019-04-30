@@ -30,6 +30,7 @@ commands:
           command: |
             source $BASH_ENV
             cd gmail/terraform/gcp/pubsub/$ENVIRONMENT_DIRECTORY
+            terraform validate ../
             terraform plan ../
 
   terraform_apply:
@@ -76,7 +77,11 @@ jobs:
     steps:
       - checkout
       - terraform_apply
-
+  apply-prd:
+    executor: default
+    steps:
+      - checkout
+      - terraform_apply
 
 workflows:
   version: 2
@@ -91,17 +96,28 @@ workflows:
           context: gmail-stg
           requires:
             - fmt
+      - plan-prd:
+          context: gmail-prd
+          requires:
+            - fmt
       - apply-dev:
           context: gmail-dev
           requires:
             - plan-dev
           filters:
             branches:
-              only: master
+              only: /^release/gmail/dev$/
       - apply-stg:
           context: gmail-stg
           requires:
             - plan-stg
           filters:
             branches:
-              only: master
+              only: /^release/gmail/stg$/
+      - apply-prd:
+          context: gmail-prd
+          requires:
+            - plan-prd
+          filters:
+            branches:
+              only: /^release/gmail/prd$/
