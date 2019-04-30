@@ -87,11 +87,16 @@ jobs:
       - checkout
       - terraform_apply
 
+# CircleCIのContextsを利用し、環境毎の認証情報等をセットする
+# GCP_CREDENTIALS
+# ENVIRONMENT_DIRECTORY
 workflows:
   version: 2
   terraform:
     jobs:
+      # fmt
       - fmt
+      # plan
       - plan-dev:
           context: gmail-dev
           requires:
@@ -104,6 +109,7 @@ workflows:
           context: gmail-prd
           requires:
             - fmt
+      # apply
       - apply-dev:
           context: gmail-dev
           requires:
