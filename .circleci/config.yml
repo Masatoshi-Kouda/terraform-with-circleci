@@ -30,7 +30,6 @@ commands:
           command: |
             source $BASH_ENV
             cd gmail/terraform/gcp/pubsub/$ENVIRONMENT_DIRECTORY
-            terraform validate ../
             terraform plan ../
 
   terraform_apply:
