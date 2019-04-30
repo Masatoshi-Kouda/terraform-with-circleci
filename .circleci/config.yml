@@ -127,14 +127,14 @@ workflows:
       - approve:
           type: approval
           requires:
-            - plan
+            - plan-prd
           filters:
             branches:
               only: /^release/gmail/prd$/
       - apply-prd:
           context: gmail-prd
           requires:
-            - approval
+            - approve
           filters:
             branches:
               only: /^release/gmail/prd$/
