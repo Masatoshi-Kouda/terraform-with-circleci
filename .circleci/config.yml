@@ -82,10 +82,10 @@ jobs:
     <<: *apply
 
 ################################################################
-# CircleCIのContextsを利用し、環境毎の認証情報等をセットする
-# セットされている値
+# 1. CircleCIのContextsを利用し、環境毎の認証情報等をセットする
 # - GCP_CREDENTIALS: service accountのjsonをbase64でエンコードした値
 # - ENVIRONMENT_DIRECTORY: terraform の環境ディレクトリ名
+# 2. ブランチ名 release/<project>/<environment> にマージされた時にterraform applyを実行する
 ################################################################
 workflows:
   version: 2
@@ -143,7 +143,6 @@ workflows:
 #          context: gmail-prd
 #          requires:
 #            - build
-#      # ブランチ名 release/<project>/<environment> にマージされた時にterraform applyを実行する
 #      - apply-dev:
 #          context: gmail-dev
 #          filters:
