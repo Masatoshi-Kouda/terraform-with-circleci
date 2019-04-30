@@ -92,14 +92,22 @@ workflows:
   build_plan_apply:
     jobs:
       - build
+      # dev
       - plan-dev:
           context: gmail-dev
           requires:
             - build
+      # stg
       - plan-stg:
           context: gmail-stg
           requires:
             - build
+      # prd
+      - plan-prd:
+          context: gmail-prd
+          requires:
+            - build
+      # dev
       - apply-dev:
           context: gmail-dev
           requires:
@@ -107,6 +115,7 @@ workflows:
           filters:
             branches:
               only: /^release/gmail/dev$/
+      # stg
       - apply-stg:
           context: gmail-stg
           requires:
@@ -114,6 +123,21 @@ workflows:
           filters:
             branches:
               only: /^release/gmail/stg$/
+      # prd
+      - approve:
+          type: approval
+          requires:
+            - plan
+          filters:
+            branches:
+              only: /^release/gmail/prd$/
+      - apply-prd:
+          context: gmail-prd
+          requires:
+            - approval
+          filters:
+            branches:
+              only: /^release/gmail/prd$/
 
 #      - plan-prd:
 #          context: gmail-prd
