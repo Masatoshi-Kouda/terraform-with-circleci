@@ -67,6 +67,11 @@ jobs:
     steps:
       - checkout
       - terraform_plan
+  plan-prd:
+    executor: default
+    steps:
+      - checkout
+      - terraform_plan
   apply-dev:
     executor: default
     steps:
