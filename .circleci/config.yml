@@ -66,6 +66,11 @@ jobs:
     steps:
       - checkout
       - terraform_plan
+  plan-prd:
+    executor: default
+    steps:
+      - checkout
+      - terraform_plan
   apply-dev:
     executor: default
     steps:
@@ -76,13 +81,26 @@ jobs:
     steps:
       - checkout
       - terraform_apply
+  apply-prd:
+    executor: default
+    steps:
+      - checkout
+      - terraform_apply
 
-
+################################################################
+# CircleCIのContextsを利用し、環境毎の認証情報等をセットする
+# セットされている値
+# - GCP_CREDENTIALS: service accountのjsonをbase64でエンコードした値
+# - ENVIRONMENT_DIRECTORY: terraform の環境ディレクトリ名
+################################################################
+# BUILD SETTINGSのOnly build pull requestsをONにしている
 workflows:
   version: 2
   terraform:
     jobs:
+      # fmt
       - fmt
+      # plan
       - plan-dev:
           context: gmail-dev
           requires:
@@ -91,17 +109,23 @@ workflows:
           context: gmail-stg
           requires:
             - fmt
+      - plan-prd:
+          context: gmail-prd
+          requires:
+            - fmt
+      # ブランチ名 release/<project>/<environment> にマージされた時にterraform applyを実行する
       - apply-dev:
           context: gmail-dev
-          requires:
-            - plan-dev
           filters:
             branches:
-              only: master
+              only: /^release/gmail/dev$/
       - apply-stg:
           context: gmail-stg
-          requires:
-            - plan-stg
           filters:
             branches:
-              only: master
+              only: /^release/gmail/stg$/
+      - apply-prd:
+          context: gmail-prd
+          filters:
+            branches:
+              only: /^release/gmail/prd$/
