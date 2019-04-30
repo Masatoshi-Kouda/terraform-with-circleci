@@ -51,41 +51,35 @@ commands:
             terraform apply --auto-approve ../
 
 jobs:
-  fmt:
+  build:
     executor: default
     steps:
       - checkout
       - terraform_fmt
+
+  plan: &plan
+    executor: default
+    steps:
+      - checkout
+      - terraform_plan
   plan-dev:
-    executor: default
-    steps:
-      - checkout
-      - terraform_plan
+    <<: *plan
   plan-stg:
-    executor: default
-    steps:
-      - checkout
-      - terraform_plan
+    <<: *plan
   plan-prd:
+    <<: *plan
+
+  apply: &apply
     executor: default
     steps:
       - checkout
-      - terraform_plan
+      - terraform_apply
   apply-dev:
-    executor: default
-    steps:
-      - checkout
-      - terraform_apply
+    <<: *apply
   apply-stg:
-    executor: default
-    steps:
-      - checkout
-      - terraform_apply
+    <<: *apply
   apply-prd:
-    executor: default
-    steps:
-      - checkout
-      - terraform_apply
+    <<: *apply
 
 ################################################################
 # CircleCIのContextsを利用し、環境毎の認証情報等をセットする
@@ -93,42 +87,51 @@ jobs:
 # - GCP_CREDENTIALS: service accountのjsonをbase64でエンコードした値
 # - ENVIRONMENT_DIRECTORY: terraform の環境ディレクトリ名
 ################################################################
-# BUILD SETTINGSのOnly build pull requestsをONにしている
 workflows:
   version: 2
-  terraform:
+  build_plan_apply:
     jobs:
-      # fmt
-      - fmt:
-          filters:
-            branches:
-              ignore: /^release/.+\/.+$/
-      # plan
+      - build
       - plan-dev:
           context: gmail-dev
           requires:
-            - fmt
+            - build
       - plan-stg:
           context: gmail-stg
           requires:
-            - fmt
-      - plan-prd:
-          context: gmail-prd
-          requires:
-            - fmt
-      # ブランチ名 release/<project>/<environment> にマージされた時にterraform applyを実行する
+            - build
       - apply-dev:
           context: gmail-dev
+          requires:
+            - plan-dev
           filters:
             branches:
               only: /^release/gmail/dev$/
       - apply-stg:
           context: gmail-stg
+          requires:
+            - plan-stg
           filters:
             branches:
               only: /^release/gmail/stg$/
-      - apply-prd:
-          context: gmail-prd
-          filters:
-            branches:
-              only: /^release/gmail/prd$/
+
+#      - plan-prd:
+#          context: gmail-prd
+#          requires:
+#            - build
+#      # ブランチ名 release/<project>/<environment> にマージされた時にterraform applyを実行する
+#      - apply-dev:
+#          context: gmail-dev
+#          filters:
+#            branches:
+#              only: /^release/gmail/dev$/
+#      - apply-stg:
+#          context: gmail-stg
+#          filters:
+#            branches:
+#              only: /^release/gmail/stg$/
+#      - apply-prd:
+#          context: gmail-prd
+#          filters:
+#            branches:
+#              only: /^release/gmail/prd$/
