@@ -7,12 +7,19 @@ executors:
     working_directory: ~/project
 
 commands:
+  install_tfnotify:
+    steps:
+      - run:
+          name: "install tfnotify"
+          command: |
+            ./scripts/install-tfnotify.sh
+
   terraform_fmt:
     steps:
       - run:
           name: "terraform fmt"
           command: |
-              terraform fmt -diff=true -check=true
+            ./scripts/tf-fmt.sh
 
   terraform_plan:
     steps:
@@ -23,14 +30,13 @@ commands:
             echo $GCP_CREDENTIALS | base64 -d > $HOME/$ENVIRONMENT_DIRECTORY/gcp_credentials.json
             echo 'export GOOGLE_APPLICATION_CREDENTIALS="$HOME/$ENVIRONMENT_DIRECTORY/gcp_credentials.json"' >> $BASH_ENV
             source $BASH_ENV
-            cd gmail/terraform/gcp/pubsub/$ENVIRONMENT_DIRECTORY
-            terraform init -backend-config backend.tfvars ../
+            ./scripts/tf-init.sh
+
       - run:
           name: "terraform plan"
           command: |
             source $BASH_ENV
-            cd gmail/terraform/gcp/pubsub/$ENVIRONMENT_DIRECTORY
-            terraform plan ../
+            ./scripts/tf-plan.sh
 
   terraform_apply:
     steps:
@@ -41,14 +47,12 @@ commands:
             echo $GCP_CREDENTIALS | base64 -d > $HOME/$ENVIRONMENT_DIRECTORY/gcp_credentials.json
             echo 'export GOOGLE_APPLICATION_CREDENTIALS="$HOME/$ENVIRONMENT_DIRECTORY/gcp_credentials.json"' >> $BASH_ENV
             source $BASH_ENV
-            cd gmail/terraform/gcp/pubsub/$ENVIRONMENT_DIRECTORY
-            terraform init -backend-config backend.tfvars ../
+            ./scripts/tf-init.sh
       - run:
           name: "terraform apply"
           command: |
             source $BASH_ENV
-            cd gmail/terraform/gcp/pubsub/$ENVIRONMENT_DIRECTORY
-            terraform apply --auto-approve ../
+            ./scripts/tf-apply.sh
 
 jobs:
   build:
@@ -61,6 +65,7 @@ jobs:
     executor: default
     steps:
       - checkout
+      - install_tfnotify
       - terraform_plan
   plan-dev:
     <<: *plan
@@ -73,6 +78,7 @@ jobs:
     executor: default
     steps:
       - checkout
+      - install_tfnotify
       - terraform_apply
   apply-dev:
     <<: *apply
@@ -138,23 +144,3 @@ workflows:
           filters:
             branches:
               only: /^release/gmail/prd$/
-
-#      - plan-prd:
-#          context: gmail-prd
-#          requires:
-#            - build
-#      - apply-dev:
-#          context: gmail-dev
-#          filters:
-#            branches:
-#              only: /^release/gmail/dev$/
-#      - apply-stg:
-#          context: gmail-stg
-#          filters:
-#            branches:
-#              only: /^release/gmail/stg$/
-#      - apply-prd:
-#          context: gmail-prd
-#          filters:
-#            branches:
-#              only: /^release/gmail/prd$/
