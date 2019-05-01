@@ -3,8 +3,8 @@ ci: circleci
 notifier:
   slack:
     token: $SLACK_TOKEN
-    channel: $SLACK_CHANNEL_ID
-    bot: $SLACK_BOT_NAME
+    channel: CJ2G4E80Z
+    bot: tfnotify
 terraform:
   plan:
     template: |
