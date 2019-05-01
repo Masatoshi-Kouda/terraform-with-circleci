@@ -7,6 +7,13 @@ executors:
     working_directory: ~/project
 
 commands:
+  install_dependency_package:
+    steps:
+      - run:
+          name: "install dependency package"
+          command: |
+            apk add bash tar gzip
+
   install_tfnotify:
     steps:
       - run:
@@ -59,12 +66,14 @@ jobs:
     executor: default
     steps:
       - checkout
+      - install_dependency_package
       - terraform_fmt
 
   plan: &plan
     executor: default
     steps:
       - checkout
+      - install_dependency_package
       - install_tfnotify
       - terraform_plan
   plan-dev:
@@ -78,6 +87,7 @@ jobs:
     executor: default
     steps:
       - checkout
+      - install_dependency_package
       - install_tfnotify
       - terraform_apply
   apply-dev:
