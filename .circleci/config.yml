@@ -49,7 +49,6 @@ commands:
       - run:
           name: "terraform apply"
           command: |
-            source $BASH_ENV
             ./scripts/tf-apply.sh
 
 jobs:
