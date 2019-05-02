@@ -33,16 +33,11 @@ commands:
       - run:
           name: "terraform init"
           command: |
-            mkdir -p $HOME/$ENVIRONMENT_DIRECTORY
-            echo $GCP_CREDENTIALS | base64 -d > $HOME/$ENVIRONMENT_DIRECTORY/gcp_credentials.json
-            echo 'export GOOGLE_APPLICATION_CREDENTIALS="$HOME/$ENVIRONMENT_DIRECTORY/gcp_credentials.json"' >> $BASH_ENV
-            source $BASH_ENV
             ./scripts/tf-init.sh
 
       - run:
           name: "terraform plan"
           command: |
-            source $BASH_ENV
             ./scripts/tf-plan.sh
 
   terraform_apply:
@@ -50,10 +45,6 @@ commands:
       - run:
           name: "terraform init"
           command: |
-            mkdir -p $HOME/$ENVIRONMENT_DIRECTORY
-            echo $GCP_CREDENTIALS | base64 -d > $HOME/$ENVIRONMENT_DIRECTORY/gcp_credentials.json
-            echo 'export GOOGLE_APPLICATION_CREDENTIALS="$HOME/$ENVIRONMENT_DIRECTORY/gcp_credentials.json"' >> $BASH_ENV
-            source $BASH_ENV
             ./scripts/tf-init.sh
       - run:
           name: "terraform apply"
@@ -97,12 +88,12 @@ jobs:
   apply-prd:
     <<: *apply
 
-################################################################
+######################################################################################
 # 1. CircleCIのContextsを利用し、環境毎の認証情報等をセットする
 # - GCP_CREDENTIALS: service accountのjsonをbase64でエンコードした値
 # - ENVIRONMENT_DIRECTORY: terraform の環境ディレクトリ名
 # 2. ブランチ名 release/<project>/<environment> にマージされた時にterraform applyを実行する
-################################################################
+######################################################################################
 workflows:
   version: 2
   build_plan_apply:
