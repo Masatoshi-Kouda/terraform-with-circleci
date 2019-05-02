@@ -5,15 +5,20 @@ notifier:
     token: $SLACK_TOKEN
     channel: CJ2G4E80Z
     bot: tfnotify
+  github:
+    token: $GITHUB_TOKEN
+    repository:
+      owner: "Masatoshi-Kouda"
+      name: "terraform-with-circleci"
 terraform:
   plan:
     template: |
+      {{ .Title }}
       {{ .Message }}
       {{if .Result}}
-      ```
-      {{ .Result }}
-      ```
+      <pre><code> {{ .Result }}
+      </pre></code>
       {{end}}
-      ```
-      {{ .Body }}
-      ```
+      <details><summary>Details (Click me)</summary>
+      <pre><code> {{ .Body }}
+      </pre></code></details>
