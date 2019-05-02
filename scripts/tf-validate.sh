@@ -8,4 +8,4 @@ echo $GCP_CREDENTIALS | base64 -d > $HOME/$ENVIRONMENT_DIRECTORY/gcp_credentials
 export GOOGLE_APPLICATION_CREDENTIALS="$HOME/$ENVIRONMENT_DIRECTORY/gcp_credentials.json"
 
 cd gmail/terraform/gcp/pubsub/$ENVIRONMENT_DIRECTORY
-terraform varidate ../
+terraform validate ../
