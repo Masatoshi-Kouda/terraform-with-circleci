@@ -28,13 +28,23 @@ commands:
           command: |
             ./scripts/tf-fmt.sh
 
+  terraform_varidate:
+    steps:
+      - run:
+          name: "terraform init"
+          command: |
+            ./scripts/tf-init.sh
+      - run:
+          name: "terraform varidate"
+          command: |
+            ./scripts/tf-varidate.sh
+
   terraform_plan:
     steps:
       - run:
           name: "terraform init"
           command: |
             ./scripts/tf-init.sh
-
       - run:
           name: "terraform plan"
           command: |
@@ -58,6 +68,7 @@ jobs:
       - checkout
       - install_dependency_package
       - terraform_fmt
+      - terraform_varidate
 
   plan: &plan
     executor: default
