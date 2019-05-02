@@ -28,7 +28,7 @@ commands:
           command: |
             ./scripts/tf-fmt.sh
 
-  terraform_plan:
+  terraform_validate:
     steps:
       - run:
           name: "terraform init"
@@ -38,6 +38,13 @@ commands:
           name: "terraform validate"
           command: |
             ./scripts/tf-validate.sh
+
+  terraform_plan:
+    steps:
+      - run:
+          name: "terraform init"
+          command: |
+            ./scripts/tf-init.sh
       - run:
           name: "terraform plan"
           command: |
@@ -55,40 +62,34 @@ commands:
             ./scripts/tf-apply.sh
 
 jobs:
-  build:
-    executor: default
-    steps:
-      - checkout
-      - install_dependency_package
-      - terraform_fmt
-
-  plan: &plan
+  build: &build
     executor: default
     steps:
       - checkout
       - install_dependency_package
       - install_tfnotify
+      - terraform_fmt
       - terraform_plan
-  plan-dev:
-    <<: *plan
-  plan-stg:
-    <<: *plan
-  plan-prd:
-    <<: *plan
+  build-dev:
+    <<: *build
+  build-stg:
+    <<: *build
+  build-prd:
+    <<: *build
 
-  apply: &apply
+  deploy: &deploy
     executor: default
     steps:
       - checkout
       - install_dependency_package
       - install_tfnotify
       - terraform_apply
-  apply-dev:
-    <<: *apply
-  apply-stg:
-    <<: *apply
-  apply-prd:
-    <<: *apply
+  deploy-dev:
+    <<: *deploy
+  deploy-stg:
+    <<: *deploy
+  deploy-prd:
+    <<: *deploy
 
 ######################################################################################
 # 1. CircleCIのContextsを利用し、環境毎の認証情報等をセットする
@@ -98,37 +99,30 @@ jobs:
 ######################################################################################
 workflows:
   version: 2
-  build_plan_apply:
+  build_and_deploy:
     jobs:
-      - build
       # dev
-      - plan-dev:
+      - build-dev:
           context: gmail-dev
-          requires:
-            - build
       # stg
-      - plan-stg:
+      - build-stg:
           context: gmail-stg
-          requires:
-            - build
       # prd
-      - plan-prd:
+      - build-prd:
           context: gmail-prd
-          requires:
-            - build
       # dev
-      - apply-dev:
+      - deploy-dev:
           context: gmail-dev
           requires:
-            - plan-dev
+            - build-dev
           filters:
             branches:
               only: /^release/gmail/dev$/
       # stg
-      - apply-stg:
+      - deploy-stg:
           context: gmail-stg
           requires:
-            - plan-stg
+            - build-stg
           filters:
             branches:
               only: /^release/gmail/stg$/
@@ -136,11 +130,11 @@ workflows:
       - approve:
           type: approval
           requires:
-            - plan-prd
+            - build-prd
           filters:
             branches:
               only: /^release/gmail/prd$/
-      - apply-prd:
+      - deploy-prd:
           context: gmail-prd
           requires:
             - approve
