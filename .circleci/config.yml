@@ -34,7 +34,10 @@ commands:
           name: "terraform init"
           command: |
             ./scripts/tf-init.sh
-
+      - run:
+          name: "terraform validate"
+          command: |
+            ./scripts/tf-validate.sh
       - run:
           name: "terraform plan"
           command: |
