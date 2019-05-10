@@ -1,3 +1,3 @@
-project = "gmail-dev"
+project = "movies-dev"
 
-project_id = "masatoshi-kouda-dev"
+project_id = "masatoshi-kouda-movies-dev"

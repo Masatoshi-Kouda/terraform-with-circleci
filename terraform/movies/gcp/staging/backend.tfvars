@@ -1,3 +1,3 @@
-bucket = "masatoshi-kouda-stg-terraform"
+bucket = "masatoshi-kouda-movies-stg-terraform"
 
-prefix = "gcp/pubsub"
+prefix = "gcp"
