@@ -162,7 +162,7 @@ workflows:
             - build-payment-stg
           filters:
             branches:
-              only: /^release/payemnt/stg$/
+              only: /^release/payment/stg$/
       # payment-prd
       - approve-payment-prd:
           type: approval
