@@ -31,34 +31,25 @@ commands:
   terraform_validate:
     steps:
       - run:
-          name: "terraform init"
-          command: |
-            ./scripts/tf-init.sh
-      - run:
           name: "terraform validate"
           command: |
+            ./scripts/tf-init.sh
             ./scripts/tf-validate.sh
 
   terraform_plan:
     steps:
       - run:
-          name: "terraform init"
-          command: |
-            ./scripts/tf-init.sh
-      - run:
           name: "terraform plan"
           command: |
+            ./scripts/tf-init.sh
             ./scripts/tf-plan.sh
 
   terraform_apply:
     steps:
       - run:
-          name: "terraform init"
-          command: |
-            ./scripts/tf-init.sh
-      - run:
           name: "terraform apply"
           command: |
+            ./scripts/tf-init.sh
             ./scripts/tf-apply.sh
 
 ############################################
@@ -75,6 +66,7 @@ jobs:
       - install_dependency_package
       - install_tfnotify
       - terraform_fmt
+      - terraform_validate
       - terraform_plan
   # movies
   build-movies-stg:
@@ -87,9 +79,29 @@ jobs:
   build-payment-prd:
     <<: *build
   ############################################
-  # deploy
+  # plan
   ############################################
-  deploy: &deploy
+  plan: &plan
+    executor: default
+    steps:
+      - checkout
+      - install_dependency_package
+      - install_tfnotify
+      - terraform_plan
+  # movies
+  plan-movies-stg:
+    <<: *plan
+  plan-movies-prd:
+    <<: *plan
+  # payment
+  plan-payment-stg:
+    <<: *plan
+  plan-payment-prd:
+    <<: *plan
+  ############################################
+  # apply
+  ############################################
+  apply: &apply
     executor: default
     steps:
       - checkout
@@ -97,22 +109,22 @@ jobs:
       - install_tfnotify
       - terraform_apply
   # movies
-  deploy-movies-stg:
-    <<: *deploy
-  deploy-movies-prd:
-    <<: *deploy
+  apply-movies-stg:
+    <<: *apply
+  apply-movies-prd:
+    <<: *apply
   # payment
-  deploy-payment-stg:
-    <<: *deploy
-  deploy-payment-prd:
-    <<: *deploy
+  apply-payment-stg:
+    <<: *apply
+  apply-payment-prd:
+    <<: *apply
 
 ############################################
 # workflows
 ############################################
 workflows:
   version: 2
-  build_and_deploy:
+  build_plan_apply:
     jobs:
       ############################################
       # build
@@ -130,13 +142,36 @@ workflows:
       - build-payment-prd:
           context: payment-prd
       ############################################
-      # deploy
+      # plan
       ############################################
       # movies-stg
-      - deploy-movies-stg:
+      - plan-movies-stg:
           context: movies-stg
           requires:
             - build-movies-stg
+      # movies-prd
+      - plan-movies-prd:
+          context: movies-prd
+          requires:
+            - build-movies-prd
+      # payment-stg
+      - plan-payment-stg:
+          context: payment-stg
+          requires:
+            - build-payment-stg
+      # payment-prd
+      - plan-payment-prd:
+          context: payment-prd
+          requires:
+            - build-payment-prd
+      ############################################
+      # apply
+      ############################################
+      # movies-stg
+      - apply-movies-stg:
+          context: movies-stg
+          requires:
+            - plan-movies-stg
           filters:
             branches:
               only: /^release/movies/stg$/
@@ -144,11 +179,11 @@ workflows:
       - approve-movies-prd:
           type: approval
           requires:
-            - build-movies-prd
+            - plan-movies-prd
           filters:
             branches:
               only: /^release/movies/prd$/
-      - deploy-movies-prd:
+      - apply-movies-prd:
           context: movies-prd
           requires:
             - approve-movies-prd
@@ -156,23 +191,23 @@ workflows:
             branches:
               only: /^release/movies/prd$/
       # payment-stg
-      - deploy-payment-stg:
-          context: payemnt-stg
+      - apply-payment-stg:
+          context: payment-stg
           requires:
-            - build-payment-stg
+            - plan-payment-stg
           filters:
             branches:
-              only: /^release/payemnt/stg$/
+              only: /^release/payment/stg$/
       # payment-prd
       - approve-payment-prd:
           type: approval
           requires:
-            - build-payment-prd
+            - plan-payment-prd
           filters:
             branches:
               only: /^release/payment/prd$/
-      - deploy-payment-prd:
-          context: payemnt-prd
+      - apply-payment-prd:
+          context: payment-prd
           requires:
             - approve-payment-prd
           filters:
