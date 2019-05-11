@@ -13,7 +13,7 @@ commands:
       - run:
           name: "install dependency package"
           command: |
-            apk add bash tar gzip
+            apk add bash tar gzip grep
 
   install_tfnotify:
     steps:
