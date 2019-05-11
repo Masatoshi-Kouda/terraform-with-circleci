@@ -13,6 +13,49 @@
 
 ![pipeline](docs/images/pipeline.png)
 
+
+## 初期設定
+
+- `CircleCI`, `GitHub`, `GCP`に関する事前設定等は下記を参考にしてください
+
+[初期設定](docs/setup.md)
+
 ## Workflow
 
+#### 1. 作業用branchを作成する
+
+```
+$ git checkout master
+$ git checkout -b add-payment-pubsub
+```
+
+#### 2. 作業用branchをpushしPRを作成する
+
+```
+$ git commit -m "Add pubsub
+$ git push origin add-payment-pubsub
+$ hub pull-request -m "Add pubsub"
+```
+
+#### 3. レビュー後問題なければmasterへマージ
+
 - todo
+
+#### 4. masterブランチをリリースbranchへマージ
+
+- `release/payment/stg` from `master`
+
+```
+$ git checkout master
+$ git pull
+$ hub pull-request -m "release/payment/stg" -b release/payment/stg
+```
+#### 5. masterブランチをリリースbranchへマージ
+
+- `release/payment/prd` from `master`
+
+```
+$ git checkout master
+$ git pull
+$ hub pull-request -m "release/gmail/prd" -b release/gmail/stg
+```
