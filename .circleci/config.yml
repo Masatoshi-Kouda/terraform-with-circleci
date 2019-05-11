@@ -124,7 +124,7 @@ workflows:
       - build-movies-prd:
           context: movies-prd
       # payment-stg
-      - build-payemnt-stg:
+      - build-payment-stg:
           context: payment-stg
       # payment-prd
       - build-payment-prd:
