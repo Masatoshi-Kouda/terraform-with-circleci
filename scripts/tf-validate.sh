@@ -1,7 +1,8 @@
-#!/usr/bin/env bash -x
+#!/usr/bin/env bash
 set -o nounset
 set -o errexit
 set -o pipefail
+set -o xtrace
 
 mkdir -p $HOME/$ENVIRONMENT_DIRECTORY
 echo $GCP_CREDENTIALS | base64 -d > $HOME/$ENVIRONMENT_DIRECTORY/gcp_credentials.json
