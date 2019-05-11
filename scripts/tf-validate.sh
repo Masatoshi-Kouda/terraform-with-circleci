@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env bash -x
 set -o nounset
 set -o errexit
 set -o pipefail
@@ -8,7 +8,7 @@ echo $GCP_CREDENTIALS | base64 -d > $HOME/$ENVIRONMENT_DIRECTORY/gcp_credentials
 export GOOGLE_APPLICATION_CREDENTIALS="$HOME/$ENVIRONMENT_DIRECTORY/gcp_credentials.json"
 
 diff_file=$(git --no-pager diff --name-only "origin/master..HEAD" "terraform/$PROJECT_NAME")
-release_branch=$(git symbolic-ref --short HEAD | egrep "^release/$PROJECT_NAME")
+release_branch=$(git symbolic-ref --short HEAD | grep "^release/$PROJECT_NAME")
 if [ -n "$diff_file" ] || [ -n "$release_branch" ]; then
     cd terraform/$PROJECT_NAME/gcp/$ENVIRONMENT_DIRECTORY
     terraform validate ../
