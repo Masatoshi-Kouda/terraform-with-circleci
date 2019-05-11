@@ -141,7 +141,7 @@ workflows:
             branches:
               only: /^release/movies/stg$/
       # movies-prd
-      - approve:
+      - approve-movies-prd:
           type: approval
           requires:
             - build-movies-prd
@@ -151,7 +151,7 @@ workflows:
       - deploy-movies-prd:
           context: movies-prd
           requires:
-            - approve
+            - approve-movies-prd
           filters:
             branches:
               only: /^release/movies/prd$/
@@ -164,7 +164,7 @@ workflows:
             branches:
               only: /^release/payemnt/stg$/
       # payment-prd
-      - approve:
+      - approve-payment-prd:
           type: approval
           requires:
             - build-payment-prd
@@ -174,7 +174,7 @@ workflows:
       - deploy-payment-prd:
           context: payemnt-prd
           requires:
-            - approve
+            - approve-payment-prd
           filters:
             branches:
               only: /^release/payment/prd$/
