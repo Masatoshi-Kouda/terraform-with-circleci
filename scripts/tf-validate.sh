@@ -12,7 +12,7 @@ git --version
 diff_file=$(git --no-pager diff --name-only "origin/master..HEAD" "terraform/$PROJECT_NAME")
 echo "hello"
 release_branch=$(git symbolic-ref --short HEAD | grep -E "^release/$PROJECT_NAME")
-if [ -n "$diff_file" ] || [ -n "$release_branch" ]; then
+if [ -n "$release_branch" ]; then
     cd terraform/$PROJECT_NAME/gcp/$ENVIRONMENT_DIRECTORY
     terraform validate ../
 else
