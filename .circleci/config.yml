@@ -4,7 +4,8 @@ executors:
   default:
     docker:
       - image: hashicorp/terraform:0.11.13
-    working_directory: ~/project
+    working_directory: &working_directory
+      ~/project
 
 commands:
   install_dependency_package:
@@ -43,9 +44,15 @@ commands:
           command: |
             ./scripts/tf-init.sh
             ./scripts/tf-plan.sh
+      - persist_to_workspace:
+          root: &working_directory
+          paths:
+            - ./*
 
   terraform_apply:
     steps:
+      - attach_workspace:
+          at: *working_directory
       - run:
           name: "terraform apply"
           command: |
@@ -67,7 +74,6 @@ jobs:
       - install_tfnotify
       - terraform_fmt
       - terraform_validate
-      - terraform_plan
   # movies
   build-movies-stg:
     <<: *build
