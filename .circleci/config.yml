@@ -157,12 +157,12 @@ workflows:
               only: /^release/movies/prd$/
       # payment-stg
       - deploy-payment-stg:
-          context: payemnt-stg
+          context: payment-stg
           requires:
             - build-payment-stg
           filters:
             branches:
-              only: /^release/payemnt/stg$/
+              only: /^release/payment/stg$/
       # payment-prd
       - approve-payment-prd:
           type: approval
@@ -172,7 +172,7 @@ workflows:
             branches:
               only: /^release/payment/prd$/
       - deploy-payment-prd:
-          context: payemnt-prd
+          context: payment-prd
           requires:
             - approve-payment-prd
           filters:
