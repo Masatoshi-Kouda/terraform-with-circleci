@@ -147,7 +147,7 @@ workflows:
             - build-movies-prd
           filters:
             branches:
-              only: /^release/moives/prd$/
+              only: /^release/movies/prd$/
       - deploy-movies-prd:
           context: movies-prd
           requires:
