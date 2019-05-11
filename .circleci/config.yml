@@ -133,7 +133,7 @@ workflows:
       # deploy
       ############################################
       # movies-stg
-      - deploy-stg:
+      - deploy-movies-stg:
           context: movies-stg
           requires:
             - build-movies-stg
@@ -148,7 +148,7 @@ workflows:
           filters:
             branches:
               only: /^release/moives/prd$/
-      - deploy-prd:
+      - deploy-movies-prd:
           context: movies-prd
           requires:
             - approve
@@ -156,7 +156,7 @@ workflows:
             branches:
               only: /^release/movies/prd$/
       # payment-stg
-      - deploy-stg:
+      - deploy-payment-stg:
           context: payemnt-stg
           requires:
             - build-payment-stg
@@ -171,7 +171,7 @@ workflows:
           filters:
             branches:
               only: /^release/payment/prd$/
-      - deploy-prd:
+      - deploy-payment-prd:
           context: payemnt-prd
           requires:
             - approve
