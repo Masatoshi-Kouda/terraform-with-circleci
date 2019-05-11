@@ -45,7 +45,7 @@ commands:
             ./scripts/tf-init.sh
             ./scripts/tf-plan.sh
       - persist_to_workspace:
-          root: &working_directory
+          root: *working_directory
           paths:
             - ./*
 
