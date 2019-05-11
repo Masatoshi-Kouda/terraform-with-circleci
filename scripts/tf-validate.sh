@@ -10,8 +10,8 @@ export GOOGLE_APPLICATION_CREDENTIALS="$HOME/$ENVIRONMENT_DIRECTORY/gcp_credenti
 
 git --version
 diff_file=$(git --no-pager diff --name-only "origin/master..HEAD" "terraform/$PROJECT_NAME")
-release_branch=$(git symbolic-ref --short HEAD | grep "^release/$PROJECT_NAME")
 echo "hello"
+release_branch=$(git symbolic-ref --short HEAD | grep -E "^release/$PROJECT_NAME")
 if [ -n "$diff_file" ] || [ -n "$release_branch" ]; then
     cd terraform/$PROJECT_NAME/gcp/$ENVIRONMENT_DIRECTORY
     terraform validate ../
