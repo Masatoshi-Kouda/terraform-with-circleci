@@ -10,7 +10,7 @@ export GOOGLE_APPLICATION_CREDENTIALS="$HOME/$ENVIRONMENT_DIRECTORY/gcp_credenti
 diff_file=$(git --no-pager diff --name-only "origin/master..HEAD" "terraform/$PROJECT_NAME")
 if [ -n "$diff_file" ]; then
     cd terraform/$PROJECT_NAME/gcp/$ENVIRONMENT_DIRECTORY
-    terraform plan ../ | tfnotify --config ../../../../tfnotify/github.yaml plan --message "terraform/$PROJECT_NAME/gcp/$ENVIRONMENT_DIRECTORY"
+    terraform plan -out=tfplan ../ | tfnotify --config ../../../../tfnotify/github.yaml plan --message "terraform/$PROJECT_NAME/gcp/$ENVIRONMENT_DIRECTORY"
 else
     echo "Skip terraform plan"
 fi
