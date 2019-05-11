@@ -44,15 +44,9 @@ commands:
           command: |
             ./scripts/tf-init.sh
             ./scripts/tf-plan.sh
-      - persist_to_workspace:
-          root: *working_directory
-          paths:
-            - ./terraform
 
   terraform_apply:
     steps:
-      - attach_workspace:
-          at: *working_directory
       - run:
           name: "terraform apply"
           command: |
@@ -94,6 +88,10 @@ jobs:
       - install_dependency_package
       - install_tfnotify
       - terraform_plan
+      - persist_to_workspace:
+          root: *working_directory
+          paths:
+            - ./terraform
   # movies
   plan-movies-stg:
     <<: *plan
@@ -113,6 +111,8 @@ jobs:
       - checkout
       - install_dependency_package
       - install_tfnotify
+      - attach_workspace:
+          at: *working_directory
       - terraform_apply
   # movies
   apply-movies-stg:
