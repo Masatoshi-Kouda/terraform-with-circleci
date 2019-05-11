@@ -13,7 +13,6 @@
 
 ![pipeline](docs/images/pipeline.png)
 
-
 ## 初期設定
 
 - `CircleCI`, `GitHub`, `GCP`に関する事前設定等は下記を参考にしてください
