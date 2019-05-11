@@ -4,7 +4,8 @@ executors:
   default:
     docker:
       - image: hashicorp/terraform:0.11.13
-    working_directory: ~/project
+    working_directory: &working_directory
+      ~/project
 
 commands:
   install_dependency_package:
@@ -12,7 +13,7 @@ commands:
       - run:
           name: "install dependency package"
           command: |
-            apk add bash tar gzip
+            apk add bash tar gzip grep
 
   install_tfnotify:
     steps:
@@ -67,7 +68,6 @@ jobs:
       - install_tfnotify
       - terraform_fmt
       - terraform_validate
-      - terraform_plan
   # movies
   build-movies-stg:
     <<: *build
@@ -88,6 +88,10 @@ jobs:
       - install_dependency_package
       - install_tfnotify
       - terraform_plan
+      - persist_to_workspace:
+          root: *working_directory
+          paths:
+            - ./terraform
   # movies
   plan-movies-stg:
     <<: *plan
@@ -107,6 +111,8 @@ jobs:
       - checkout
       - install_dependency_package
       - install_tfnotify
+      - attach_workspace:
+          at: *working_directory
       - terraform_apply
   # movies
   apply-movies-stg:
