@@ -75,6 +75,7 @@ jobs:
       - install_dependency_package
       - install_tfnotify
       - terraform_fmt
+      - terraform_validate
       - terraform_plan
   # movies
   build-movies-stg:
