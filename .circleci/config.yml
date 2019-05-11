@@ -61,7 +61,13 @@ commands:
           command: |
             ./scripts/tf-apply.sh
 
+############################################
+# jobs
+############################################
 jobs:
+  ############################################
+  # build
+  ############################################
   build: &build
     executor: default
     steps:
@@ -70,13 +76,19 @@ jobs:
       - install_tfnotify
       - terraform_fmt
       - terraform_plan
-  build-dev:
+  # movies
+  build-movies-stg:
     <<: *build
-  build-stg:
+  build-movies-prd:
     <<: *build
-  build-prd:
+  # payment
+  build-payment-stg:
     <<: *build
-
+  build-payment-prd:
+    <<: *build
+  ############################################
+  # deploy
+  ############################################
   deploy: &deploy
     executor: default
     steps:
@@ -84,60 +96,85 @@ jobs:
       - install_dependency_package
       - install_tfnotify
       - terraform_apply
-  deploy-dev:
+  # movies
+  deploy-movies-stg:
     <<: *deploy
-  deploy-stg:
+  deploy-movies-prd:
     <<: *deploy
-  deploy-prd:
+  # payment
+  deploy-payment-stg:
+    <<: *deploy
+  deploy-payment-prd:
     <<: *deploy
 
-######################################################################################
-# 1. CircleCIのContextsを利用し、環境毎の認証情報等をセットする
-# - GCP_CREDENTIALS: service accountのjsonをbase64でエンコードした値
-# - ENVIRONMENT_DIRECTORY: terraform の環境ディレクトリ名
-# 2. ブランチ名 release/<project>/<environment> にマージされた時にterraform applyを実行する
-######################################################################################
+############################################
+# workflows
+############################################
 workflows:
   version: 2
   build_and_deploy:
     jobs:
-      # dev
-      - build-dev:
-          context: gmail-dev
-      # stg
-      - build-stg:
-          context: gmail-stg
-      # prd
-      - build-prd:
-          context: gmail-prd
-      # dev
-      - deploy-dev:
-          context: gmail-dev
-          requires:
-            - build-dev
-          filters:
-            branches:
-              only: /^release/gmail/dev$/
-      # stg
+      ############################################
+      # build
+      ############################################
+      # movies-stg
+      - build-movies-stg:
+          context: movies-stg
+      # movies-prd
+      - build-movies-prd:
+          context: movies-prd
+      # payment-stg
+      - build-payemnt-stg:
+          context: payment-stg
+      # payment-prd
+      - build-payment-prd:
+          context: payment-prd
+      ############################################
+      # deploy
+      ############################################
+      # movies-stg
       - deploy-stg:
-          context: gmail-stg
+          context: movies-stg
           requires:
-            - build-stg
+            - build-movies-stg
           filters:
             branches:
-              only: /^release/gmail/stg$/
-      # prd
+              only: /^release/movies/stg$/
+      # movies-prd
       - approve:
           type: approval
           requires:
-            - build-prd
+            - build-movies-prd
           filters:
             branches:
-              only: /^release/gmail/prd$/
+              only: /^release/moives/prd$/
       - deploy-prd:
-          context: gmail-prd
+          context: movies-prd
           requires:
             - approve
           filters:
             branches:
-              only: /^release/gmail/prd$/
+              only: /^release/movies/prd$/
+      # payment-stg
+      - deploy-stg:
+          context: payemnt-stg
+          requires:
+            - build-payment-stg
+          filters:
+            branches:
+              only: /^release/payemnt/stg$/
+      # payment-prd
+      - approve:
+          type: approval
+          requires:
+            - build-payment-prd
+          filters:
+            branches:
+              only: /^release/payment/prd$/
+      - deploy-prd:
+          context: payemnt-prd
+          requires:
+            - approve
+          filters:
+            branches:
+              only: /^release/payment/prd$/
