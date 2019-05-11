@@ -8,4 +8,4 @@ echo $GCP_CREDENTIALS | base64 -d > $HOME/$ENVIRONMENT_DIRECTORY/gcp_credentials
 export GOOGLE_APPLICATION_CREDENTIALS="$HOME/$ENVIRONMENT_DIRECTORY/gcp_credentials.json"
 
 cd terraform/$PROJECT_NAME/gcp/$ENVIRONMENT_DIRECTORY
-terraform plan ../ | tfnotify --config ../../../../tfnotify.yaml plan --message "### $ENVIRONMENT_DIRECTORY"
+terraform plan ../ | tfnotify --config ../../../../tfnotify.yaml plan --message "terraform/$PROJECT_NAME/gcp/$ENVIRONMENT_DIRECTORY"
