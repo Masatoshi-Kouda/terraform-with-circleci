@@ -1,3 +1,4 @@
+/**
 resource "google_storage_bucket" "example" {
   name          = "${var.project}-${local.location}-example-storage"
   location      = "${local.region}"
@@ -9,3 +10,5 @@ resource "google_storage_bucket" "example" {
 
   force_destroy = true
 }
+**/
+
