@@ -58,21 +58,14 @@ $ git commit -m "[ci skip] Update README.md"
 
 ![workflow3](docs/images/workflow3.png)
 
-#### 4. masterブランチをリリースbranchへマージ
-
-- `release/payment/stg` from `master`
+#### 4. masterブランチをリリースbranchへマージします
 
 ```
 $ git checkout master
 $ git pull origin master
 $ hub pull-request -m "release/payment/stg" -b release/payment/stg
 ```
-#### 5. masterブランチをリリースbranchへマージ
 
-- `release/payment/prd` from `master`
+- PR作成後リリースbranchへmasterブランチをマージすると、`terraform apply`がCircleCI上で実行されます
 
-```
-$ git checkout master
-$ git pull
-$ hub pull-request -m "release/gmail/prd" -b release/gmail/stg
-```
+![workflow4](docs/images/workflow4.png)
