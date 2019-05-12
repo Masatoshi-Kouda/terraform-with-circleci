@@ -4,7 +4,7 @@
 
 #### 1. サービスアカウントの作成
 
-- 各プロジェクトでterraform実行用のサービスアカウントを作成します
+- 各プロジェクトで`CircleCI`にて`terraform`実行用のサービスアカウントを作成します
 - 役割は`編集者`を与えてください
 
 ![setup1](images/setup1.png)
@@ -12,20 +12,20 @@
 #### 2. サービスアカウントキーの作成
 
 - キーのタイプとして`JSON`を選択しダウンロードします
-- 作成したサービスアカウントキーは、以降の手順で、CIの環境変数として使用します
+- 作成したサービスアカウントキーは、以降の手順で`CircleCI`の環境変数として使用します
 
 ## GitHub
 
 #### 3. Personal access tokensを作成
 
-- `GitHub`の`Personal access tokens`を発行します
+- `tfnotify`による`terraform`実行結果通知用に`GitHub`の`Personal access tokens`を発行します
 - tokensの`scopes`は`repo`と`write:discussion`になります
 
 ![setup2](images/setup2.png)
 
 ## CircleCI
 
-- Contextを利用して各GCPプロジェクト毎の認証情報等を登録します
+- `Context`を利用して各GCPプロジェクト毎の認証情報等を登録します
 
 #### 4. Contextの作成
 
@@ -58,7 +58,7 @@ $ base64 <service-account-key>.json
 
 #### 6. ProjectのEnvironment Variablesを作成
 
-- `GITHUB_TOKEN`を登録します
+- `PROJECT SETTINGS`より`Environment Variables`に`GITHUB_TOKEN`を登録します
 
 | Name         | Value                  |
 |:-------------|:-----------------------|
