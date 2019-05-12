@@ -21,17 +21,19 @@
 
 ## Workflow
 
-#### 1. 作業用branchを作成する
+#### 1. 作業用branchを作成します
 
 ```
 $ git checkout master
+$ git pull origin master
 $ git checkout -b add-payment-pubsub
 ```
 
-#### 2. 作業用branchをpushしPRを作成する
+#### 2. 修正が完了したら作業用branchをpushしPRを作成します
 
 ```
-$ git commit -m "Add pubsub
+$ git add .
+$ git commit -m "Add pyament pubsub
 $ git push origin add-payment-pubsub
 $ hub pull-request -m "Add pubsub"
 ```
@@ -46,7 +48,7 @@ $ hub pull-request -m "Add pubsub"
 
 ```
 $ git checkout master
-$ git pull
+$ git pull origin master
 $ hub pull-request -m "release/payment/stg" -b release/payment/stg
 ```
 #### 5. masterブランチをリリースbranchへマージ
