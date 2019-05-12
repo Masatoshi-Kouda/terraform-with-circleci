@@ -29,18 +29,29 @@ $ git pull origin master
 $ git checkout -b add-payment-pubsub
 ```
 
-#### 2. 修正が完了したら作業用branchをpushしPRを作成します
+#### 2. 修正が完了したら作業用branchをpushし、PRを作成します
 
 ```
 $ git add .
-$ git commit -m "Add pyament pubsub
+$ git commit -m "Add pyament pubsub"
 $ git push origin add-payment-pubsub
-$ hub pull-request -m "Add pubsub"
+$ hub pull-request -m "Add payment pubsub"
 ```
+
+- branchをpushすると、CicrcleCIで下記のようにJobが実行されます
+
+![workflow1](docs/images/workflow1.png)
+
+
+- また、Jobで実行される`terraform plan`の結果が、CircleCIより`thnotify`で実行結果が通知されます
+
+![workflow2](docs/images/workflow2.png)
 
 #### 3. レビュー後問題なければmasterへマージ
 
-- todo
+- `terraform plan`の実行結果等、変更箇所に問題なければマージします
+
+![workflow3](docs/images/workflow3.png)
 
 #### 4. masterブランチをリリースbranchへマージ
 
