@@ -42,12 +42,17 @@ $ hub pull-request -m "Add payment pubsub"
 
 ![workflow1](docs/images/workflow1.png)
 
+- Jobをskipさせたい場合は、下記の用にコミットメッセージに`[ci skip]`を記載してください
 
-- また、Jobで実行される`terraform plan`の結果が、CircleCIより`thnotify`で実行結果が通知されます
+```
+$ git commit -m "[ci skip] Update README.md"
+```
+
+- しばらくすると、Jobで実行される`terraform plan`の実行結果が`thnotify`で通知されます
 
 ![workflow2](docs/images/workflow2.png)
 
-#### 3. レビュー後問題なければmasterへマージ
+#### 3. レビュー後問題なければmasterへマージします
 
 - `terraform plan`の実行結果等、変更箇所に問題なければマージします
 
