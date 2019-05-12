@@ -3,3 +3,4 @@ tmp/
 *.tfstate
 *.tfstate.backup
 *.tfstate.lock.info
+.DS_Store
