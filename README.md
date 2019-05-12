@@ -21,24 +21,42 @@
 
 ## Workflow
 
-#### 1. 作業用branchを作成する
+#### 1. 作業用branchを作成します
 
 ```
 $ git checkout master
+$ git pull origin master
 $ git checkout -b add-payment-pubsub
 ```
 
-#### 2. 作業用branchをpushしPRを作成する
+#### 2. 修正が完了したら作業用branchをpushし、PRを作成します
 
 ```
-$ git commit -m "Add pubsub
+$ git add .
+$ git commit -m "Add pyament pubsub"
 $ git push origin add-payment-pubsub
-$ hub pull-request -m "Add pubsub"
+$ hub pull-request -m "Add payment pubsub"
 ```
 
-#### 3. レビュー後問題なければmasterへマージ
+- branchをpushすると、CicrcleCIで下記のようにJobが実行されます
 
-- todo
+![workflow1](docs/images/workflow1.png)
+
+- Jobをskipさせたい場合は、下記の用にコミットメッセージに`[ci skip]`を記載してください
+
+```
+$ git commit -m "[ci skip] Update README.md"
+```
+
+- しばらくすると、Jobで実行される`terraform plan`の実行結果が`thnotify`で通知されます
+
+![workflow2](docs/images/workflow2.png)
+
+#### 3. レビュー後問題なければmasterへマージします
+
+- `terraform plan`の実行結果等、変更箇所に問題なければマージします
+
+![workflow3](docs/images/workflow3.png)
 
 #### 4. masterブランチをリリースbranchへマージ
 
@@ -46,7 +64,7 @@ $ hub pull-request -m "Add pubsub"
 
 ```
 $ git checkout master
-$ git pull
+$ git pull origin master
 $ hub pull-request -m "release/payment/stg" -b release/payment/stg
 ```
 #### 5. masterブランチをリリースbranchへマージ
