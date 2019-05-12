@@ -68,14 +68,16 @@ jobs:
       - install_tfnotify
       - terraform_fmt
       - terraform_validate
-  # movies
+  # movies-stg
   build-movies-stg:
     <<: *build
+  # movies-prd
   build-movies-prd:
     <<: *build
-  # payment
+  # payment-stg
   build-payment-stg:
     <<: *build
+  # payment-prd
   build-payment-prd:
     <<: *build
   ############################################
@@ -92,14 +94,16 @@ jobs:
           root: *working_directory
           paths:
             - ./terraform
-  # movies
+  # movies-stg
   plan-movies-stg:
     <<: *plan
+  # movies-prd
   plan-movies-prd:
     <<: *plan
-  # payment
+  # payment-stg
   plan-payment-stg:
     <<: *plan
+  # payment-prd
   plan-payment-prd:
     <<: *plan
   ############################################
@@ -114,14 +118,16 @@ jobs:
       - attach_workspace:
           at: *working_directory
       - terraform_apply
-  # movies
+  # movies-stg
   apply-movies-stg:
     <<: *apply
+  # movies-prd
   apply-movies-prd:
     <<: *apply
-  # payment
+  # payment-stg
   apply-payment-stg:
     <<: *apply
+  # payment-prd
   apply-payment-prd:
     <<: *apply
 
