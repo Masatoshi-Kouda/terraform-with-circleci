@@ -12,7 +12,6 @@ release_branch=$(git symbolic-ref --short HEAD | grep -E "^release/$PROJECT_NAME
 if [ -n "$diff_file" ] || [ -n "$release_branch" ]; then
     cd terraform/$PROJECT_NAME/gcp/$ENVIRONMENT_DIRECTORY
     terraform init -backend-config backend.tfvars ../
-
 else
     echo "Skip terraform init"
 fi
